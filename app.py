@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 import PyPDF2
 from docx import Document
-import openai
+from openai import OpenAI
 from typing import List, Dict, Tuple
 import pandas as pd
 from io import BytesIO
@@ -61,7 +61,7 @@ class ResumeAnalyzer:
     
     def __init__(self, api_key: str):
         """Initialize the analyzer with OpenAI API key"""
-        openai.api_key = api_key
+        self.client = OpenAI(api_key=api_key)
         self.model = "gpt-3.5-turbo"
     
     def extract_text_from_pdf(self, file) -> str:
@@ -138,7 +138,7 @@ class ResumeAnalyzer:
             {job_description}
             """
             
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": "You are an expert resume analyst and recruiter. Provide detailed analysis in JSON format."},
